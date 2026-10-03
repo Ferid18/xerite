@@ -1,39 +1,75 @@
-<div align="center">
-# 🗺️ Pathfinding Visualizer: Dijkstra vs A* on Real Maps
+# Xəritədə Dijkstra və A* Vizualizatoru
 
-**OpenStreetMap məlumatları üzərində real şəhər küçələrində Dijkstra və A\* (A-Star) alqoritmlərinin canlı vizualizasiyası və müqayisəsi.**
+Bu Python layihəsi OpenStreetMap-dən real avtomobil yollarını yükləyir və həmin şəbəkədə iki ən qısa yol alqoritmini yan-yana müqayisə edir:
 
-[![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![OSMnx](https://img.shields.io/badge/OSMnx-Geospatial-orange.svg?style=for-the-badge)](https://osmnx.readthedocs.io/)
-[![NetworkX](https://img.shields.io/badge/NetworkX-Graph%20Data-lightgrey.svg?style=for-the-badge)](https://networkx.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+- **Dijkstra** — hədəfin yerini nəzərə almadan ən aşağı məsafəli yolları ardıcıl araşdırır.
+- **A\*** — faktiki yol məsafəsinə əlavə olaraq hədəfə olan düzxətli məsafəni istifadə edir və çox vaxt daha az düyün araşdırır.
 
-<br/>
-⭐ **Layihə xoşunuza gəldisə, zəhmət olmasa repozitoriyaya bir ulduz (Star) ataraq dəstək olun!** ⭐
+Nəticə qaranlıq temalı, animasiyalı pəncərədə göstərilir. Hər paneldə alqoritmin araşdırdığı yollar və sonda tapdığı optimal marşrut görünür.
 
-[Xüsusiyyətlər](#-əsas-xüsusiyyətlər) • [Quraşdırma](#-quraşdırma) • [İstifadə Qaydası](#-istifadə-qaydası) • [Layihə Strukturu](#-layihə-strukturu) • [Alqoritmik İzah](#-alqoritmlərin-müqayisəsi-və-riyazi-əsası) • [Müəllif](#-müəllif-və-əlaqə)
-</div>
+## Xüsusiyyətlər
 
----
+- İstənilən OpenStreetMap regionu üçün yol şəbəkəsinin yüklənməsi
+- Yalnız tam əlaqəli yol komponentinin istifadə olunması
+- Dijkstra və A* üçün düzgün prioritet növbəsi (heap) məntiqi
+- Paralel yol hissələri olduqda ən qısa hissənin seçilməsi
+- Başlanğıc və hədəf üçün uzaq, müqayisə etməyə uyğun nöqtələrin avtomatik seçilməsi
+- Araşdırılan düyün sayı və ümumi marşrut məsafəsinin konsolda göstərilməsi
+- Performanslı `LineCollection` əsaslı animasiya
 
-## 📌 Layihə Haqqında
-Bu layihə istənilən şəhərin və ya rayonun real yol infrastrukturunu qraf modeli şəklində OpenStreetMap-dən çəkir və ən populyar iki qısa yol axtarış alqoritmini (Dijkstra və A\*) **yan-yana, sinxron və animasiyalı** şəkildə qarşılaşdırır. Vizual dizayn müasir, qaranlıq (Dark Cyberpunk / Sci-Fi) üslubda tərtib edilmişdir. Hər iki alqoritmin kəşf etdiyi yollar addım-addım vizuallaşdırılır, axtarış başa çatdıqda isə tapılmış optimal marşrut parlaq neon yaşıl xətlə ekranda vurğulanır.
+## Tələblər
 
----
+- Python 3.9 və ya daha yeni versiya
+- İnternet bağlantısı — OpenStreetMap məlumatını yükləmək üçün
 
-## ✨ Əsas Xüsusiyyətlər
-- **🌍 Qlobal Region Seçimi:** Proqram açıldıqda konsola daxil etdiyiniz istənilən şəhər/region adını dinamik yükləyir (Məs: `Baku, Azerbaijan`, `Kadıköy, Istanbul`, `Berlin, Germany`).
-- **🔗 Əlaqəli Qraf Təhlükəsizliyi (Strongly Connected Components):** Yüklənmiş qrafın daxilində dalan və ya təcrid olunmuş adacıqları təmizləyərək hər iki nöqtə arasında mütləq yolun tapılmasını təmin edir.
-- **⚡ Canlı Animasiya:** Alqoritmlərin axtarış prosesi (node exploration) qaranlıq xəritə üzərində vizual olaraq göstərilir.
-- **📊 Performans Müqayisəsi:** Hər iki alqoritm axtarışı bitirdikdən sonra sərf olunan zaman, ziyarət edilən qovşaq (node) sayı və tapılan marşrutun ümumi məsafəsi konsolda müqayisə edilir.
+Paketləri quraşdırın:
 
----
-
-## 🚀 Quraşdırma
-
-Layihəni öz kompüterinizdə işlətmək üçün aşağıdakı addımları izləyin:
-
-1. Repozitoriyanı klonlayın:
 ```bash
-git clone [https://github.com/Ferid18/xerite.git](https://github.com/Ferid18/xerite.git)
-cd xerite
+pip install -r requirements.txt
+```
+
+## İşə salma
+
+```bash
+python main.py
+```
+
+Proqram region adı soruşacaq. Məsələn:
+
+```text
+Baku, Azerbaijan
+```
+
+Digər nümunələr:
+
+- `Sabayil, Baku, Azerbaijan`
+- `Kadikoy, Istanbul, Turkey`
+- `Manhattan, New York, USA`
+- `Mitte, Berlin, Germany`
+
+Boş Enter düyməsi sıxıldıqda standart olaraq `Mitte, Berlin, Germany` istifadə edilir.
+
+## Nəticənin oxunuşu
+
+| Element | Mənası |
+| --- | --- |
+| Yaşıl nöqtə | Başlanğıc nöqtəsi |
+| Çəhrayı nöqtə | Hədəf nöqtəsi |
+| Sarı/mavi xətlər | Müvafiq alqoritmin axtarış zamanı araşdırdığı yollar |
+| Parlaq yaşıl xətt | Tapılmış optimal marşrut |
+
+Soldakı panel Dijkstra, sağdakı panel isə A* nəticəsini göstərir. Panel başlığında hər alqoritmin araşdırdığı düyün sayı yazılır. Konsolda isə marşrut məsafəsi kilometrlə görünür.
+
+## Layihə strukturu
+
+```text
+xerite/
+├── main.py          # Alqoritmlər, xəritə yükləmə və animasiya
+├── requirements.txt # Python asılılıqları
+├── .gitignore       # Keş və kompilyasiya faylları üçün istisnalar
+└── README.md        # Layihə sənədi
+```
+
+## Qeyd
+
+Böyük şəhər və ya ölkə adı daxil etmək xəritənin yüklənməsini və animasiyanı yavaşıda bilər. Daha rahat istifadə üçün şəhər, rayon və ya məhəllə səviyyəsində region seçin.
